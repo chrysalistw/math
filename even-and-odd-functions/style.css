@@ -1,0 +1,35 @@
+h1{
+	text-align: center;
+}
+#demonstration{
+	width: max(900px, 50%);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	place-items: center;
+}
+#panel{
+	width: max(900px, 50%);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	place-items: center;
+}
+canvas{
+	display: inline;
+}
+div.arrow{
+	display: grid;
+	place-items: center;
+	width: 100px;
+	font-size: 100px;
+	user-select: none;
+}
+.content{
+	width: min(900px, 75%);
+	margin: 0 auto;
+}
+.sponse{
+	text-align: center;
+	font-size: 150%;
+}

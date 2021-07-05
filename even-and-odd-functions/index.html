@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ]});"></script>
+<title>奇函數與偶函數</title>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+<script type="module">
+import Grapher from "./modules.js"
+var funcType = "polynomial"
+var displayType = "all"
+var func, comp
+
+document.body.onload = function(){
+	func = new Grapher(document.getElementById("func"))
+	func.background()
+	func.addGraph("polynomial", "black", new Array(400).fill(0).map((e,i)=>{
+			i -= 200
+			return -i*(i*(i*((i/1e8+1/1e7)*i-321/1e6)-109/2e5)+1.51)+25.5+200
+	}))
+	func.addGraph("exponential", "black", new Array(400).fill(0).map((e,i)=>{
+		i = (i-200)/60
+		return -30*Math.exp(i)+200
+
+	}))
+	func.addGraph("hand", "black")
+
+	func.drawGraph(func.graphs.polynomial)
+
+	comp = new Grapher(document.getElementById("comp"))
+	comp.background()
+	comp.addGraph("odd", "red")
+	comp.addGraph("even", "green")
+
+	draw2Functions()
+
+	document.getElementById("func").addEventListener("mousemove", draw2Functions)
+	document.getElementById("func").addEventListener("mouseup", draw2Functions)
+
+	document.querySelector("input[value='polynomial']").addEventListener("change", changeTo("polynomial"))
+	document.querySelector("input[value='exponential']").addEventListener("change", changeTo("exponential"))
+	document.querySelector("input[value='hand']").addEventListener("change", changeTo("hand"))
+
+	document.querySelector("input[value='all']").addEventListener("change", display("all"))
+	document.querySelector("input[value='odd']").addEventListener("change", display("odd"))
+	document.querySelector("input[value='even']").addEventListener("change", display("even"))
+}
+function draw2Functions(e){
+	let f = func.graphs[funcType].data
+	for(let i=0;i<f.length;i++){
+		comp.graphs.odd.data[i] = 0.5*(f[i]-f[f.length-1-i])+200
+		comp.graphs.even.data[i] = 0.5*(f[i]+f[f.length-1-i])
+	}
+	
+	comp.background()
+	switch(displayType){
+		case "all":
+			comp.drawGraph(comp.graphs.odd)
+			comp.drawGraph(comp.graphs.even)
+			break
+		case "odd":
+			comp.drawGraph(comp.graphs.odd)
+			break
+		case "even":
+			comp.drawGraph(comp.graphs.even)
+			break
+		default:
+	}
+}
+function changeTo(f){
+	return function(){
+		if(funcType==="hand")
+			func.removePen("hand")
+		funcType = f
+		func.background()
+		func.drawGraph(func.graphs[f])
+		if(f==="hand")
+			func.addPen("hand")
+		draw2Functions()
+	}
+}
+function display(f){
+	return function(){
+		displayType = f
+		draw2Functions()
+	}
+}
+</script>
+<h1>將函數表示成奇函數與偶函數之和</h1>
+	<div>
+	<div id="demonstration">
+		<!--interactive demonstration-->
+		<canvas id="func"></canvas>
+		<div class="arrow">→</div>
+		<canvas id="comp"></canvas>
+	</div>
+	<div id="panel">
+		<div>
+		<input type="radio" name="example" value="polynomial" checked>多項式函數</input>
+		<input type="radio" name="example" value="exponential">指數函數</input>
+		<input type="radio" name="example" value="hand">自己畫</input>
+		</div>
+		<div class="arrow"></div>
+		<div>
+		<input type="radio" name="display" value="all" checked>奇、偶函數皆顯示</input>
+		<input type="radio" name="display" value="odd">只顯示奇函數</input>
+		<input type="radio" name="display" value="even">只顯示偶函數</input>
+		</div>
+	</div>
+	</div>
+<div class="content">
+<h2>說明</h2>
+<p>
+若一個函數 $f$ 對每個其定義域中的 $x$ 都有 $f(-x)=f(x)$，則稱此函數為<b>偶函數</b>。由此定義可知其函數的函數圖形左右對稱於 $y$ 軸。偶函數的例子有 $f(x)=x^2$，$f(x)=\cos(x)$<br>
+
+而若一個函數 $f$ 對每個其定義域中的 $x$ 都有 $f(-x)=-f(x)$，則稱此函數為<b>奇函數</b>，其函數圖形點對稱於原點。奇函數的例子有 $f(x)=x^3$，$f(x)=\sin(x)$<br>
+</p>
+<p>
+給定一個函數，可以將其表示成奇函數與偶函數之和，且其表示法是唯一的。假設 $O(x)$ 是奇函數、 $E(x)$ 是偶函數，由定義可列出：<br>
+$$
+\left\{\begin{aligned}
+	f(x)&=E(x)+O(x)\\
+	f(-x)&=E(x)-O(x)
+\end{aligned}\right.
+$$
+可得：
+$$
+\begin{aligned}
+O(x)=\frac{f(x)-f(-x)}{2}\\
+E(x)=\frac{f(x)+f(-x)}{2}
+\end{aligned}
+$$
+</p>
+<p>
+接下來證明其唯一性。假設 $f(x)$ 除了 $O_1(x)+E_1(x)$ 之外，還可寫成 $O_2(x)+E_2(x)$，也就是 $O_1(x)+E_1(x)=O_2(x)+E_2(x)$。得
+$$
+\begin{aligned}g(x)&=O_1(x)-O_2(x)\\&=E_2(x)-E_1(x)\end{aligned}
+$$
+容易看出 $g(x)$ 同時為奇函數與偶函數，也就是 $g(x)=0$（若函數 $f$ 同時為奇函數與偶函數，即 $f(-x)=f(x)=-f(x)$，易得 $f(x)=0$）。如此，由上式即可得 $O_1(x)=O_2(x)$ 與 $E_1(x)=E_2(x)$。所以這兩種寫法是相同的，也就是只有一種寫法。
+</p>
+<p class="sponse">
+贊助連結<br>
+<a href="https://liker.land/lightfulhuang/civic">https://liker.land/lightfulhuang/civic</a>
+<div class="likecoin-embed likecoin-button" data-liker-id="lightfulhuang" data-href="https://chrysalis.tw/math/even-and-odd-functions"></div>
+</p>
+<!--2021-07-05 (Mon)-->
+</div>
+</body>
+<script src="https://static.like.co/sdk/v1/button.js"></script>
+</html>
